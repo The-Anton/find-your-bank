@@ -1,0 +1,9 @@
+.appbar {
+    background-color: #fff;
+    position: relative;
+    padding: 1rem 3.5rem;
+}
+
+.logo {
+    margin: 0 auto;
+}

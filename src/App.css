@@ -1,0 +1,14 @@
+.btn-success {
+  background-color: #43C799;
+}
+
+.btn-primary {
+  background-color: #597AFB;
+}
+
+.wrapper {
+display: flex;
+min-height: 100vh;
+flex-direction: column;
+justify-content: space-between;
+}

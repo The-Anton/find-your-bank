@@ -1,0 +1,55 @@
+.controlsCard {
+    background-color: #fff;
+    margin-top: 20px;
+    border-radius: 3px;
+}
+
+.homeContent{
+    display: flex;
+    justify-content: space-evenly !important;
+}
+
+.btn {
+    padding: 2px;
+    width: 120px;
+    margin: 9px 5px 0 0;
+    float: right;
+}
+
+.loadingDiv {
+    height: 100%;
+    display: grid;
+    margin-top: 100px;
+}
+
+.loading {
+    align-self: center;
+    justify-self: center;
+    margin: 100px auto;
+}
+
+.dots {
+    align-self: center;
+    justify-self: center;
+    margin-top: -30px;
+}
+
+.dropdown-item:hover {
+    background-color: #597AFB;
+}
+
+.menu .dropdown-item:hover {
+    background-color: #43C799;
+}
+
+.heading {
+    padding: 10px 0;
+}
+
+.buttonBottom {
+    margin-bottom: 10px;
+}
+
+.typo {
+    color: #d5d5d5;
+}
