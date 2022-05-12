@@ -12,7 +12,6 @@ import {
   FavoriteBorderOutlined,
   List,
 } from "@material-ui/icons";
-import MuiAlert from "@material-ui/lab/Alert";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/TableComponent/Table"
@@ -52,9 +51,8 @@ const Favourite = () => {
   const classes = useStyles();
   const [value, setValue] = useState(1);
   const materialUITheme = useTheme();
-  var originalRows = JSON.parse(localStorage.getItem("favourite"));
+  var favouriteRows = JSON.parse(localStorage.getItem("favourite"));
   const isMobile = useMediaQuery(materialUITheme.breakpoints.down("md"));
-  const [rows, setRows] = useState(originalRows);
   const [openDrawer, setOpenDrawer] = useState(false);
 
 
@@ -107,7 +105,7 @@ const Favourite = () => {
               
             </Grid>
             <Grid item className="table" xs={12} md={10} >
-            <Table data={rows} />
+            <Table data={favouriteRows} />
         </Grid>
         </Grid>
       </div>

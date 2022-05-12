@@ -1,7 +1,6 @@
 import {
   makeStyles,
   Paper,
-  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -11,29 +10,15 @@ import {
   TableRow,
   withStyles,
 } from "@material-ui/core";
-import { CallMade, Favorite, FavoriteBorder } from "@material-ui/icons";
+import {  AccountBalance , Favorite, FavoriteBorder } from "@material-ui/icons";
 import SearchBar from "material-ui-search-bar";
-import MuiAlert from "@material-ui/lab/Alert";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./TableCard.css";
 
-const useStyles = makeStyles({
-  root: {
-    width: "100%",
-  },
-  container: {
-    maxHeight: "auto",
-  },
-});
-
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
-
 const columns = [
   { id: "favourite", label: "Favourite", align: "right", minWidth: 30 },
-  { id: "bank_name", label: "Bank", minWidth: 150 },
+  { id: "bank_name", label: "Bank", minWidth: 150},
   { id: "ifsc", label: "IFSC", minWidth: 150, align: "center" },
   { id: "branch", label: "Branch", minWidth: 100 },
   { id: "bank_id", label: "Bank ID", minWidth: 100 },
@@ -47,29 +32,33 @@ const columns = [
 
 ];
 
-const StyledTableCell = withStyles((theme) => ({
-  head: {
-    backgroundColor: "#5165F7",
-    color: theme.palette.common.white,
-  
+const useStyles = makeStyles({
+  root: {
+    width: "100%",
   },
-  body: {
-    fontSize: 10,
+  container: {
+    maxHeight: "auto",
   },
-}))(TableCell);
-
+});
 
 
 const TableCard = ({ data, category, val }) => {
+  var originalRows = data;
   const classes = useStyles();
   const [page, setPage] = useState(0);
+  const StyledTableCell = withStyles((theme) => ({
+    head: {
+      backgroundColor: "#5165F7",
+      color: theme.palette.common.white,
+    },
+    body: {
+      fontSize: 10,
+    },
+  }))(TableCell);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  var originalRows = data;
   const [rows, setRows] = useState(originalRows);
   const [searched, setSearched] = useState("");
-  const [opensuccess, setOpenSuccess] = useState(false);
-  const [openinfo, setOpeninfo] = useState(false);
-  var vertical="bottom", horizontal="right";
+  const [isClicked, setIsClicked] = useState(false);
 
 
   useEffect(() => {
@@ -77,21 +66,7 @@ const TableCard = ({ data, category, val }) => {
   }, [data])
 
   const handleClick = () => {
-    setOpenSuccess(true);
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") return;
-    setOpenSuccess(false);
-  };
-
-  const handleClickInfo = () => {
-    setOpeninfo(true);
-  };
-
-  const handleCloseInfo = (event, reason) => {
-    if (reason === "clickaway") return;
-    setOpeninfo(false);
+    setIsClicked(true);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -104,7 +79,7 @@ const TableCard = ({ data, category, val }) => {
   };
 
 
-  const requestSearch = (searchVal) => {
+  const initiateSearch = (searchVal) => {
     const filteredRows = originalRows.filter((row) => {
       if (category !== "")
         return row[category].toLowerCase().includes(searchVal.toLowerCase());
@@ -113,9 +88,9 @@ const TableCard = ({ data, category, val }) => {
     setRows(filteredRows);
   };
 
-  const cancelSearch = () => {
+  const stopSearch = () => {
     setSearched("");
-    requestSearch(searched);
+    initiateSearch(searched);
   };
 
   const favClick = (id) => {
@@ -149,8 +124,8 @@ const TableCard = ({ data, category, val }) => {
       <Paper className={classes.root}>
         <SearchBar 
           value={searched}
-          onChange={(searchVal) => requestSearch(searchVal)}
-          onCancelSearch={() => cancelSearch()}
+          onChange={(searchVal) => initiateSearch(searchVal)}
+          onCancelSearch={() => stopSearch()}
           className="searchbar"
         />
 
@@ -182,19 +157,6 @@ const TableCard = ({ data, category, val }) => {
                         const value = row[column.id];
                         return (
                           <StyledTableCell key={column.id} align={column.align}>
-                            {column.format && column.id !== "bank_name"
-                              ? column.format(value)
-                              : value}
-                            {column.id === "bank_name" && (
-                              <Link
-                                to={{
-                                  pathname: `/bank-details/${row["ifsc"]}`,
-                                  state: { row: row },
-                                }}
-                              >
-                                <CallMade />
-                              </Link>
-                            )}
                             {column.id === "favourite" && !row.favourite && (
                               <div
                                 onClick={() => {
@@ -205,16 +167,33 @@ const TableCard = ({ data, category, val }) => {
                                 <FavoriteBorder />
                               </div>
                             )}
+                            
                             {column.id === "favourite" && row.favourite && (
                               <div
                                 onClick={() => {
                                   favClick(row.ifsc);
-                                  handleClickInfo();
                                 }}
                               >
                                 <Favorite style={{ color: "#5064F7" }} />
                               </div>
                             )}
+
+                            {column.format && column.id !== "bank_name"
+                              ? column.format(value)
+                              : value}
+
+                            {column.id === "bank_name" && (
+                              <Link
+                                to={{
+                                  pathname: `/bank-details/${row["ifsc"]}`,
+                                  state: { row: row },
+                                }}
+                              >
+                                <AccountBalance />
+                              </Link>
+                            )}
+                            
+                            
                           </StyledTableCell>
                         );
                       })}

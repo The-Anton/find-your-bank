@@ -4,26 +4,19 @@ import {
   Tab,
   Grid,
   makeStyles,
-  withStyles,
-  Box,
-  Typography,
   IconButton,
   useMediaQuery,
   useTheme,
 } from "@material-ui/core";
 import "./AllBanks.css";
 import MenuIcon from "@material-ui/icons/Menu";
-import PropTypes from "prop-types";
 import Table from "../../components/TableComponent/Table"
-import brand from "../../assets/Groww-Logo.png";
 import { Link } from "react-router-dom";
-import Loader from "react-loader-spinner";
 import { FavoriteBorderOutlined, List } from "@material-ui/icons";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import SearchBar from "material-ui-search-bar";
+import Select from '@mui/material/Select';
 import Lottie from 'react-lottie';
 import loader from '../../assets/lotties/loader.json';
 
@@ -41,56 +34,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const StyledTab = withStyles({
-  wrapper: {
-    textTransform: "capitalize",
-  },
-})(Tab);
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
 
 const Controls = () => {
+  const [city, setCity] = useState("Mumbai");
+  const [category, setCategory] = useState("");
+  const [data, setData] = useState([]);
   const classes = useStyles();
   const materialUITheme = useTheme();
-  const isMobile = useMediaQuery(materialUITheme.breakpoints.down("md"));
-  const [value, setValue] = useState(0);
-  const [city, setCity] = useState("Mumbai");
-  const [cat, setCat] = useState("None");
   const [isLoaded, setIsLoaded] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
-  const [data, setData] = useState([]);
-  const [category, setCategory] = useState("");
+  const isMobile = useMediaQuery(materialUITheme.breakpoints.down("md"));
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -100,14 +53,7 @@ const Controls = () => {
     }
   };
 
-  const handleCityChange = (event) => {
-    setCity(event.target.value);
-  };
-
-  const handleCatChange = (event) => {
-    setCat(event.target.value);
-  };
-
+  
   const fetchapi = (val) => {
     if (localStorage.getItem(val)) {
       setTimeout(() => {
@@ -137,19 +83,20 @@ const Controls = () => {
           setData(data);
           const item = {
             data: data,
-            expiry: now.getTime() + 60 * 6000, // 1 hour Expiry Limit
+            expiry: now.getTime() + 60 * 6000, 
           };
           localStorage.setItem(val, JSON.stringify(item));
           setIsLoaded(true);
         })
         .catch((err) => {
-          console.log("Error fetching data : ", err);
+          console.log("Error : ", err);
         });
     }
   };
 
   useEffect(() => {
     var val = "MUMBAI";
+
     if (localStorage.getItem("favourite") === null) {
       localStorage.setItem("favourite", JSON.stringify([]));
     }
@@ -165,13 +112,13 @@ const Controls = () => {
       setIsLoaded(true);
       return;
     }
-    console.log(localStorage.getItem(val));
+
     if (
       localStorage.getItem(val) === null ||
       localStorage.getItem(val) === []
     ) {
-      var apiLink = `https://vast-shore-74260.herokuapp.com/banks?city=${val}`;
-      fetch(apiLink)
+      var api = `https://vast-shore-74260.herokuapp.com/banks?city=${val}`;
+      fetch(api)
         .then((res) => {
           return res.json();
         })
@@ -182,20 +129,16 @@ const Controls = () => {
           setData(info);
           const item = {
             data: info,
-            expiry: now.getTime() + 60 * 6000, // 1 hour Expiry Limit
+            expiry: now.getTime() + 60 * 6000, 
           };
           localStorage.setItem(val, JSON.stringify(item));
           setIsLoaded(true);
         })
         .catch((err) => {
-          console.log("Error fetching data : ", err);
+          console.log("Error : ", err);
         });
     }
   }, []);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
 
   if (!isLoaded)
     return (
@@ -210,7 +153,6 @@ const Controls = () => {
   else {
     return (
       <div>
-
         <div className="homeContents">
         <Grid item container className="leftBar" xs={12} md={12} direction="row" style={{gap: 64}}>
             <Grid item className="leftBar" xs={1} md={1} >
@@ -220,26 +162,24 @@ const Controls = () => {
                 </IconButton>
               ) : (
                 <Tabs
-                  value={value}
                   orientation="vertical"
-                  onChange={handleChange}
                   classes={{ indicator: classes.indicator }}
                 >
                   <Link to="/" style={{ textDecoration: "none", color: "#000" }}>
-                    <StyledTab
+                    <Tab
                       label="All Banks"
                       icon={<List />}
-                      {...a11yProps(0)}
+                      id = "simple-tab-0"
                     />
                   </Link>
                   <Link
                     to="/favourites"
                     style={{ textDecoration: "none", color: "#000" }}
                   >
-                    <StyledTab
+                    <Tab
                       label="Favourites"
                       icon={<FavoriteBorderOutlined />}
-                      {...a11yProps(1)}
+                      id= "simple-tab-1"
                     />
                   </Link>
                 </Tabs>
@@ -262,22 +202,26 @@ const Controls = () => {
                           id="demo-simple-select"
                           value={city}
                           label="City"
-                          onChange={handleCityChange}
                         >
                           <MenuItem value={"Mumbai"} onClick={() => {
                                 fetchapi("MUMBAI");
+                                setCity("Mumbai");
                               }}>Mumbai</MenuItem>
                           <MenuItem value={"Bhopal"} onClick={() => {
                                 fetchapi("BHOPAL");
+                                setCity("Bhopal");
                               }}>Bhopal</MenuItem>
                           <MenuItem value={"Indore"} onClick={() => {
                                 fetchapi("INDORE");
+                                setCity("Indore");
                               }}>Indore</MenuItem>
                           <MenuItem value={"Delhi"} onClick={() => {
                                 fetchapi("DELHI");
+                                setCity("Delhi");
                               }}>Delhi</MenuItem>
                           <MenuItem value={"Lucknow"} onClick={() => {
                                 fetchapi("LUCKNOW");
+                                setCity('Lucknow');
                               }}>Lucknow</MenuItem>
                         </Select>
                       </FormControl>
@@ -288,26 +232,21 @@ const Controls = () => {
                         <Select
                           labelId="search-filter-label"
                           id="search-filter"
-                          value={cat}
+                          value={category}
                           label="Category"
-                          onChange={handleCatChange}
                         >
                           <MenuItem value={" "} onClick={() => {
-                                setCat("None");
                                 setCategory(" ");
                               }}>None</MenuItem>
-                          <MenuItem value={"IFSC"} onClick={() => {
-                                setCat("IFSC");
+                          <MenuItem value={"ifsc"} onClick={() => {
                                 setCategory("ifsc");
                               }}>IFSC</MenuItem>
-                          <MenuItem value={"Indore"} onClick={() => {
-                                setCat("Bank Name");
+                          <MenuItem value={"bank_name"} onClick={() => {
                                 setCategory("bank_name");
                               }}>Bank Name</MenuItem>
                           <MenuItem value={"branch"} onClick={() => {
-                                setCat("Branch");
                                 setCategory("branch");
-                              }}>Bank Name</MenuItem>
+                              }}>Branch</MenuItem>
                         </Select>
                       </FormControl>
                     </Grid>
